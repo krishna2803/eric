@@ -10,13 +10,18 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData.dark(
+        useMaterial3: true,
+      ),
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Test Application'),
-        ),
+          elevation: 2,
+        )
       ),
     );
   }
