@@ -1,3 +1,4 @@
+import 'package:eric/constants/routes.dart';
 import 'package:eric/firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -58,12 +59,11 @@ class _LoginViewState extends State<LoginView> {
               final email = _email.text;
               final password = _password.text;
               try {
-                final userCredential =
-                    await FirebaseAuth.instance.signInWithEmailAndPassword(
+                await FirebaseAuth.instance.signInWithEmailAndPassword(
                   email: email,
                   password: password,
                 );
-                print(userCredential);
+                Navigator.of(context).pushNamedAndRemoveUntil(driverRoute, (route) => false);
               } on FirebaseAuthException catch (ex) {
                 if (ex.code == 'INVALID_LOGIN_CREDENTIALS') {
                   // TODO: Handle email already in use
@@ -76,7 +76,7 @@ class _LoginViewState extends State<LoginView> {
           TextButton(
             onPressed: () {
               Navigator.of(context)
-                  .pushNamedAndRemoveUntil('/register/', (route) => false);
+                  .pushNamedAndRemoveUntil(registerRoute, (route) => false);
             },
             child: const Text('Not registered yet? Click here to Register'),
           ),
