@@ -3,14 +3,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-class LoginView extends StatefulWidget {
-  const LoginView({super.key});
+class RegisterView extends StatefulWidget {
+  const RegisterView({super.key});
 
   @override
-  State<LoginView> createState() => _LoginViewState();
+  State<RegisterView> createState() => _RegisterViewState();
 }
 
-class _LoginViewState extends State<LoginView> {
+class _RegisterViewState extends State<RegisterView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
 
@@ -32,7 +32,7 @@ class _LoginViewState extends State<LoginView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login'),
+        title: const Text('Register'),
       ),
       body: Column(
         children: [
@@ -53,19 +53,20 @@ class _LoginViewState extends State<LoginView> {
             ),
           ),
           TextButton(
-            child: const Text('Log in'),
+            child: const Text('Register'),
             onPressed: () async {
               final email = _email.text;
               final password = _password.text;
+
               try {
                 final userCredential =
-                    await FirebaseAuth.instance.signInWithEmailAndPassword(
+                    await FirebaseAuth.instance.createUserWithEmailAndPassword(
                   email: email,
                   password: password,
                 );
                 print(userCredential);
               } on FirebaseAuthException catch (ex) {
-                if (ex.code == 'INVALID_LOGIN_CREDENTIALS') {
+                if (ex.code == 'email-already-in-use') {
                   // TODO: Handle email already in use
                 } else {
                   print('error! ${ex.code}');
@@ -74,12 +75,12 @@ class _LoginViewState extends State<LoginView> {
             },
           ),
           TextButton(
-            onPressed: () {
-              Navigator.of(context)
-                  .pushNamedAndRemoveUntil('/register/', (route) => false);
-            },
-            child: const Text('Not registered yet? Click here to Register'),
-          ),
+          onPressed: () {
+            Navigator.of(context)
+                .pushNamedAndRemoveUntil('/login/', (route) => false);
+          },
+          child: const Text('Already Registered? Click here to Login'),
+        ),
         ],
       ),
     );
