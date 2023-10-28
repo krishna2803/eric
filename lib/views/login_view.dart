@@ -64,19 +64,24 @@ class _LoginViewState extends State<LoginView> {
                   email: email,
                   password: password,
                 );
-                Navigator.of(context)
-                    .pushNamedAndRemoveUntil(driverRoute, (route) => false);
+                final user = FirebaseAuth.instance.currentUser;
+                if (user?.emailVerified ?? false) {
+                  Navigator.of(context)
+                      .pushNamedAndRemoveUntil(driverRoute, (route) => false);
+                } else {
+                  Navigator.of(context).pushNamed(verifyEmailRoute);
+                }
               } on FirebaseAuthException catch (ex) {
                 if (ex.code == 'INVALID_LOGIN_CREDENTIALS') {
                   await showErrorDialog(
                       context, 'Please recheck your email and password.');
                 } else {
-                  await showErrorDialog(
-                      context, 'An unexpected error has occured.\nError code: \"${ex.code}\"');
+                  await showErrorDialog(context,
+                      'An unexpected error has occured.\nError code: \"${ex.code}\"');
                 }
               } catch (ex) {
-                await showErrorDialog(
-                      context, 'An unexpected error has occured.\nError code: \"${ex.toString()}\"');
+                await showErrorDialog(context,
+                    'An unexpected error has occured.\nError code: \"${ex.toString()}\"');
               }
             },
           ),

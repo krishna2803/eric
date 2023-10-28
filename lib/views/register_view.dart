@@ -61,33 +61,36 @@ class _RegisterViewState extends State<RegisterView> {
               final password = _password.text;
 
               try {
-                final userCredential =
-                    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                await FirebaseAuth.instance.createUserWithEmailAndPassword(
                   email: email,
                   password: password,
                 );
-                Navigator.of(context)
-                  .pushNamedAndRemoveUntil(verifyEmailRoute, (_) => false);
+
+                final user = FirebaseAuth.instance.currentUser;
+                await user?.sendEmailVerification();
+
+                Navigator.of(context).pushNamed(verifyEmailRoute);
               } on FirebaseAuthException catch (ex) {
                 if (ex.code == 'email-already-in-use') {
-                  await showErrorDialog(context, 'Entered email is already in use.');
-                } else {
                   await showErrorDialog(
-                      context, 'An unexpected error has occured.\nError code: \"${ex.code}\"');
+                      context, 'Entered email is already in use.');
+                } else {
+                  await showErrorDialog(context,
+                      'An unexpected error has occured.\nError code: \"${ex.code}\"');
                 }
               } catch (ex) {
-                await showErrorDialog(
-                      context, 'An unexpected error has occured.\nError code: \"${ex.toString()}\"');
+                await showErrorDialog(context,
+                    'An unexpected error has occured.\nError code: \"${ex.toString()}\"');
               }
             },
           ),
           TextButton(
-          onPressed: () {
-            Navigator.of(context)
-                .pushNamedAndRemoveUntil(loginRoute, (route) => false);
-          },
-          child: const Text('Already Registered? Click here to Login'),
-        ),
+            onPressed: () {
+              Navigator.of(context)
+                  .pushNamedAndRemoveUntil(loginRoute, (route) => false);
+            },
+            child: const Text('Already Registered? Click here to Login'),
+          ),
         ],
       ),
     );

@@ -15,6 +15,13 @@ class _EmailVerifyViewState extends State<EmailVerifyView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: BackButton(
+          onPressed: () {
+            FirebaseAuth.instance.signOut();
+            Navigator.of(context)
+                .pushNamedAndRemoveUntil(loginRoute, (route) => false);
+          },
+        ),
         title: const Text('Email Verification'),
         actions: [
           PopupMenuButton<MenuAction>(
@@ -43,13 +50,15 @@ class _EmailVerifyViewState extends State<EmailVerifyView> {
       ),
       body: Column(
         children: [
-          const Text('Please verify your email'),
+          const Text(
+              'Check your email and follow the steps to verify your email.'),
+          const Text('Incase you haven\'t received the mail, press resend.'),
           ElevatedButton(
             onPressed: () async {
               final user = FirebaseAuth.instance.currentUser;
               await user?.sendEmailVerification();
             },
-            child: const Text('Verify'),
+            child: const Text('Resend'),
           )
         ],
       ),
