@@ -8,8 +8,6 @@ import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';
 
-import 'dart:developer' as Debug show log;
-
 void main() {
   debugPrint = (message, {wrapWidth}) => {};
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,6 +19,7 @@ void main() {
         loginRoute: (context) => const LoginView(),
         registerRoute: (context) => const RegisterView(),
         driverRoute: (context) => const DriverView(),
+        verifyEmailRoute: (context) => const EmailVerifyView(),
       },
     ),
   );

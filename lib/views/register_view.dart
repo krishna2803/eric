@@ -1,5 +1,6 @@
 import 'package:eric/constants/routes.dart';
 import 'package:eric/firebase_options.dart';
+import 'package:eric/utils/show_error_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -65,13 +66,18 @@ class _RegisterViewState extends State<RegisterView> {
                   email: email,
                   password: password,
                 );
-                print(userCredential);
+                Navigator.of(context)
+                  .pushNamedAndRemoveUntil(verifyEmailRoute, (_) => false);
               } on FirebaseAuthException catch (ex) {
                 if (ex.code == 'email-already-in-use') {
-                  // TODO: Handle email already in use
+                  await showErrorDialog(context, 'Entered email is already in use.');
                 } else {
-                  print('error! ${ex.code}');
+                  await showErrorDialog(
+                      context, 'An unexpected error has occured.\nError code: \"${ex.code}\"');
                 }
+              } catch (ex) {
+                await showErrorDialog(
+                      context, 'An unexpected error has occured.\nError code: \"${ex.toString()}\"');
               }
             },
           ),

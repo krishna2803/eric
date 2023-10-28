@@ -1,5 +1,6 @@
 import 'package:eric/constants/routes.dart';
 import 'package:eric/firebase_options.dart';
+import 'package:eric/utils/show_error_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -63,13 +64,19 @@ class _LoginViewState extends State<LoginView> {
                   email: email,
                   password: password,
                 );
-                Navigator.of(context).pushNamedAndRemoveUntil(driverRoute, (route) => false);
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil(driverRoute, (route) => false);
               } on FirebaseAuthException catch (ex) {
                 if (ex.code == 'INVALID_LOGIN_CREDENTIALS') {
-                  // TODO: Handle email already in use
+                  await showErrorDialog(
+                      context, 'Please recheck your email and password.');
                 } else {
-                  print('error! ${ex.code}');
+                  await showErrorDialog(
+                      context, 'An unexpected error has occured.\nError code: \"${ex.code}\"');
                 }
+              } catch (ex) {
+                await showErrorDialog(
+                      context, 'An unexpected error has occured.\nError code: \"${ex.toString()}\"');
               }
             },
           ),
