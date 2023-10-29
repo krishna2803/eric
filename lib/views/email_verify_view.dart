@@ -3,6 +3,8 @@ import 'package:eric/main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import 'driver_view.dart';
+
 class EmailVerifyView extends StatefulWidget {
   const EmailVerifyView({super.key});
 
