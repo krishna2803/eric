@@ -2,9 +2,9 @@ import 'dart:math';
 
 import 'package:eric/constants/destinations.dart';
 import 'package:eric/constants/routes.dart';
-import 'package:eric/main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
@@ -16,8 +16,10 @@ class DriverView extends StatefulWidget {
   State<DriverView> createState() => _DriverViewState();
 }
 
+LatLng? finalDestination;
+LatLng? startPosition;
+
 class _DriverViewState extends State<DriverView> {
-  static const double pointSize = 65;
   static const double pointY = 250;
   LatLng? _destination;
 
@@ -33,6 +35,14 @@ class _DriverViewState extends State<DriverView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(4.0),
+          child: Container(
+            color: const Color(0xff74ff18),
+            height: 2.0,
+          ),
+        ),
         actions: [
           PopupMenuButton<MenuAction>(
             onSelected: (value) async {
@@ -63,10 +73,19 @@ class _DriverViewState extends State<DriverView> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Text('Available e-ricks: 0'),
-          const Text('Choose a destination:'),
-          Text('Dropped pin is nearest to ${determineNearest()}'),
           Container(
+            margin: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 0.0),
+          ),
+          Text.rich(TextSpan(text: 'Dropped pin is nearest to ', children: [
+            TextSpan(
+                text: determineNearest(),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green,
+                ))
+          ])).animate().fade(duration: Duration(milliseconds: 800)),
+          Container(
+            margin: EdgeInsets.fromLTRB(0, 40, 0, 0),
             height: 500,
             width: MediaQuery.of(context).size.width,
             alignment: Alignment.center,
@@ -99,13 +118,26 @@ class _DriverViewState extends State<DriverView> {
                 )
               ],
             ),
-          ),
+          )
+              .animate()
+              .fadeIn(duration: 600.ms) // uses `Animate.defaultDuration`
+              .scale(delay: 500.ms, duration: 200.ms),
           ElevatedButton(
-            onPressed: () {
-
+            onPressed: () async {
+              final choice = await confirmDestination(context);
+              if (!choice) return;
+              finalDestination = _destination;
+              try {
+                Position pos = await Geolocator.getCurrentPosition(
+                    desiredAccuracy: LocationAccuracy.best);
+                startPosition = LatLng(pos.latitude, pos.longitude);
+              } catch (ex) {
+                startPosition = _destination;
+              }
+              Navigator.of(context).pushNamed(paymentRoute);
             },
             child: const Text('Confirm destination'),
-          )
+          ).animate().fade(),
         ],
       ),
     );
@@ -182,6 +214,33 @@ Future<bool> showLogoutDialog(BuildContext context) {
               Navigator.of(context).pop(true);
             },
             child: const Text('Logout'),
+          )
+        ],
+      );
+    },
+  ).then((value) => value ?? false);
+}
+
+Future<bool> confirmDestination(BuildContext context) {
+  return showDialog<bool>(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text('Confirm destination'),
+        content: const Text(
+            'Are you sure you want to go to destination of dropped pin?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+            child: const Text('No'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+            child: const Text('Yes'),
           )
         ],
       );

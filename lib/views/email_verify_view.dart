@@ -1,5 +1,4 @@
 import 'package:eric/constants/routes.dart';
-import 'package:eric/main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -17,12 +16,20 @@ class _EmailVerifyViewState extends State<EmailVerifyView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         leading: BackButton(
           onPressed: () {
             FirebaseAuth.instance.signOut();
             Navigator.of(context)
                 .pushNamedAndRemoveUntil(loginRoute, (route) => false);
           },
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(4.0),
+          child: Container(
+            color: const Color(0xff74ff18),
+            height: 2.0,
+          ),
         ),
         title: const Text('Email Verification'),
         actions: [

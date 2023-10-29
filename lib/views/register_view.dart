@@ -1,8 +1,6 @@
 import 'package:eric/constants/routes.dart';
-import 'package:eric/firebase_options.dart';
 import 'package:eric/utils/show_error_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class RegisterView extends StatefulWidget {
@@ -34,16 +32,32 @@ class _RegisterViewState extends State<RegisterView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: const Text('Register'),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(4.0),
+          child: Container(
+            color: const Color(0xff74ff18),
+            height: 2.0,
+          ),
+        ),
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           TextField(
             controller: _email,
             enableSuggestions: false,
             autocorrect: false,
             keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(hintText: 'Email'),
+            decoration: const InputDecoration(
+              prefixIcon: Icon(
+                Icons.email_outlined,
+                color: Color(0xff74ff18),
+              ),
+              hintText: 'Email',
+            ),
           ),
           TextField(
             controller: _password,
@@ -51,6 +65,10 @@ class _RegisterViewState extends State<RegisterView> {
             enableSuggestions: false,
             autocorrect: false,
             decoration: const InputDecoration(
+              prefixIcon: Icon(
+                Icons.password,
+                color: Color(0xff74ff18),
+              ),
               hintText: 'Password',
             ),
           ),
@@ -76,11 +94,11 @@ class _RegisterViewState extends State<RegisterView> {
                       context, 'Entered email is already in use.');
                 } else {
                   await showErrorDialog(context,
-                      'An unexpected error has occured.\nError code: \"${ex.code}\"');
+                      'An unexpected error has occured.\nError code: "${ex.code}"');
                 }
               } catch (ex) {
                 await showErrorDialog(context,
-                    'An unexpected error has occured.\nError code: \"${ex.toString()}\"');
+                    'An unexpected error has occured.\nError code: "${ex.toString()}"');
               }
             },
           ),
